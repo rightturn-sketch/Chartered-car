@@ -129,6 +129,14 @@
   .pill .en{ display:block; font-size:10px; opacity:0.85; font-weight:400; margin-top:1px; }
 
   .subfield{ display:none; margin-top:12px; padding:15px; background:var(--cream); border:1px solid var(--border); border-radius:14px; }
+
+  /* ---- 常用地址 ---- */
+  .common-addr-row{ display:flex; flex-wrap:wrap; gap:8px; margin-bottom:14px; }
+  .common-addr-chip{ display:flex; align-items:center; gap:6px; background:var(--white); border:1.5px solid var(--border); border-radius:20px; padding:6px 6px 6px 13px; font-size:12.5px; font-weight:600; color:var(--ink); cursor:pointer; transition:all .15s ease; }
+  .common-addr-chip:hover{ border-color:var(--gold); }
+  .common-addr-chip .chip-del{ display:flex; align-items:center; justify-content:center; width:18px; height:18px; border-radius:50%; color:var(--muted); font-size:10px; }
+  .common-addr-chip .chip-del:hover{ background:var(--navy); color:#fff; }
+  .save-common-link{ display:inline-block; margin:8px 0 4px; font-size:12px; color:var(--gold); font-weight:600; text-decoration:underline; cursor:pointer; }
   .subfield.show{display:block;}
 
   .vehicle-card{
@@ -231,7 +239,7 @@
       <div class="flight-plane" id="flightPlane">✈</div>
     </div>
     <div class="progress-track" id="progressTrack"></div>
-    <div class="progress-label" style="margin-top:8px;"><span id="stepIndex">01</span> / 08　<span id="stepName">聯絡資訊</span></div>
+    <div class="progress-label" style="margin-top:8px;"><span id="stepIndex">01</span> / 04　<span id="stepName">聯絡與時間</span></div>
   </div>
 
   <div class="card">
@@ -239,7 +247,7 @@
     <!-- STEP 0: contact -->
     <div class="step active" data-step="0">
       <div class="step-eyebrow">STEP 01</div>
-      <div class="step-title">聯絡資訊</div>
+      <div class="step-title">聯絡資訊與用車時間</div>
       <div class="field">
         <label>姓名</label>
         <input type="text" id="f-name" placeholder="請輸入乘客姓名">
@@ -248,13 +256,6 @@
         <label>聯絡電話</label>
         <input type="tel" id="f-phone" placeholder="請輸入手機號碼，例如 0912345678">
       </div>
-      <div class="error-text" id="err-0">請完整填寫姓名與電話（電話至少 8 碼）。</div>
-    </div>
-
-    <!-- STEP 1: date/time -->
-    <div class="step" data-step="1">
-      <div class="step-eyebrow">STEP 02</div>
-      <div class="step-title">用車日期與時間</div>
       <div class="field">
         <label>用車日期</label>
         <input type="date" id="f-date">
@@ -263,21 +264,17 @@
         <label>用車時間</label>
         <input type="time" id="f-time">
       </div>
-      <div class="error-text" id="err-1">請選擇日期與時間（日期需為今天以後）。</div>
+      <div class="error-text" id="err-0">請完整填寫姓名、電話（至少 8 碼）與用車日期時間。</div>
+      <div id="savedProfileNote" style="display:none; margin-top:10px; font-size:11.5px; color:var(--muted);">
+        💾 已自動帶入上次填寫的聯絡資訊　<a href="#" id="clearSavedProfile" style="color:var(--gold); text-decoration:underline;">清除重填</a>
+      </div>
     </div>
 
-    <!-- STEP 2: pickup location -->
-    <div class="step" data-step="2">
-      <div class="step-eyebrow">STEP 03</div>
-      <div class="step-title">上車地點</div>
+    <!-- STEP 1: pickup location + charter hours/note -->
+    <div class="step" data-step="1">
+      <div class="step-eyebrow">STEP 02</div>
+      <div class="step-title">上車地點與包車需求</div>
       <div id="pickupFields"></div>
-      <div class="error-text" id="err-2">請完整填寫上車地點資訊。</div>
-    </div>
-
-    <!-- STEP 3: charter hours/note -->
-    <div class="step" data-step="3">
-      <div class="step-eyebrow">STEP 04</div>
-      <div class="step-title">包車時數與需求</div>
       <div class="field">
         <label>包車時數</label>
         <select id="charter-hours">
@@ -293,13 +290,13 @@
         <label>行程需求／目的地（選填）</label>
         <textarea id="charter-note" rows="4" placeholder="請說明大致行程、預計前往地點、是否需要中途等候等"></textarea>
       </div>
-      <div class="error-text" id="err-3">請選擇包車時數。</div>
+      <div class="error-text" id="err-1">請完整填寫上車地點資訊並選擇包車時數。</div>
     </div>
 
-    <!-- STEP 4: pax / luggage -->
-    <div class="step" data-step="4">
-      <div class="step-eyebrow">STEP 05</div>
-      <div class="step-title">人數與行李</div>
+    <!-- STEP 2: pax / luggage / vehicle / addons / payment -->
+    <div class="step" data-step="2">
+      <div class="step-eyebrow">STEP 03</div>
+      <div class="step-title">人數、行李、車輛與加購</div>
       <div class="field">
         <label>搭乘人數</label>
         <select id="f-pax">
@@ -310,46 +307,44 @@
         <label>行李尺寸與數量（可複選，選填）</label>
         <div id="luggageStepperGroup"></div>
       </div>
-      <div class="error-text" id="err-4">請選擇搭乘人數。</div>
-    </div>
-
-    <!-- STEP 5: vehicle -->
-    <div class="step" data-step="5">
-      <div class="step-eyebrow">STEP 06</div>
-      <div class="step-title">選擇車輛</div>
-      <div class="field" style="margin-bottom:0;">
+      <div class="field">
         <label>車型</label>
         <div id="vehicleTypeGroup"></div>
       </div>
-      <div class="error-text" id="err-5">請選擇車型。</div>
-      <div id="vehicleNote" style="margin-top:14px; font-size:11px; color:var(--muted); line-height:1.7; background:var(--bg-elev); border:1px solid var(--border); border-radius:10px; padding:12px;">
+      <div class="error-text" id="err-2">請選擇搭乘人數、車型與付款方式。</div>
+      <div id="vehicleNote" style="margin:14px 0; font-size:11px; color:var(--muted); line-height:1.7; background:var(--bg-elev); border:1px solid var(--border); border-radius:10px; padding:12px;">
         以上包車金額為定額收費，行程中不臨時加價；最終價格如有特殊需求以客服報價為準。<br>
         超時收費標準：轎車每小時加收 NT$600，休旅車每小時加收 NT$700，九人座每小時加收 NT$900。<br>
         費用包含：司機服務、行李協助、行程內等候時間、基本油資、過路費。<br>
         另計項目：安全座椅／增高墊、偏遠山區或郊區、跨多縣市長途。
       </div>
-    </div>
-
-    <!-- STEP 6: addons -->
-    <div class="step" data-step="6">
-      <div class="step-eyebrow">STEP 07</div>
-      <div class="step-title">附加服務（可複選）</div>
       <div class="field">
         <label>座椅加購（可選數量，NT$200／個）</label>
         <div id="addonStepperGroup"></div>
       </div>
-      <div class="field" style="margin-bottom:0;">
+      <div class="field">
         <label>免費偏好設定</label>
         <div class="pill-group" id="addonFreeGroup"></div>
       </div>
+      <div class="field" style="margin-bottom:0;">
+        <label>付款方式</label>
+        <div class="pill-group" id="paymentMethodGroup">
+          <div class="pill" data-value="現金">現金</div>
+          <div class="pill" data-value="轉帳">轉帳</div>
+        </div>
+      </div>
     </div>
 
-    <!-- STEP 7: review -->
-    <div class="step" data-step="7">
-      <div class="step-eyebrow">STEP 08</div>
+    <!-- STEP 3: review -->
+    <div class="step" data-step="3">
+      <div class="step-eyebrow">STEP 04</div>
       <div class="step-title">確認預約內容</div>
 
       <div class="pass">
+        <div class="pass-order">
+          <div class="k">ORDER NO 訂單編號</div>
+          <div class="v" id="pass-order-number">—</div>
+        </div>
         <div class="pass-top">
           <div class="pass-route">
             <div>
@@ -373,6 +368,7 @@
             <div class="pass-item full"><div class="k">BAGGAGE 行李</div><div class="v" id="pass-baggage">—</div></div>
             <div class="pass-item full"><div class="k">ADD-ONS 附加服務</div><div class="v" id="pass-addons">—</div></div>
             <div class="pass-item full"><div class="k">NOTE 行程需求</div><div class="v" id="pass-note">—</div></div>
+            <div class="pass-item full"><div class="k">PAYMENT 付款方式</div><div class="v" id="pass-payment">—</div></div>
             <div class="pass-item full"><div class="k">FARE 預估金額</div><div class="v" id="pass-fare">—</div></div>
           </div>
         </div>
@@ -401,7 +397,7 @@
 
 </div>
 <script>
-  const STEP_NAMES = ["聯絡資訊","日期時間","上車地點","包車需求","人數行李","車輛選擇","附加服務","確認送出"];
+  const STEP_NAMES = ["聯絡與時間","上車與包車需求","人數・車輛・付款","確認送出"];
   const TOTAL_STEPS = STEP_NAMES.length;
   let currentStep = 0;
 
@@ -690,11 +686,11 @@
   ];
 
   const formData = {
-    name:"", phone:"", date:"", time:"",
+    orderNumber:"", name:"", phone:"", date:"", time:"",
     pCity:"", pDistrict:"", pLandmark:"", pAddress:"",
     charterHours:"", charterNote:"",
     pax:"", luggage:{},
-    vehicleType:"", addons:{}, addonQty:{}, price:0
+    vehicleType:"", addons:{}, addonQty:{}, price:0, paymentMethod:""
   };
   LUGGAGE_SIZES.forEach(s=>formData.luggage[s]=0);
   ADDONS_PAID.concat(ADDONS_FREE).forEach(a=>formData.addons[a.id]=false);
@@ -727,8 +723,73 @@
     paxSelect.appendChild(opt);
   }
 
+  // ---------- 常用地址：儲存後下次可一鍵帶入 ----------
+  const COMMON_ADDR_KEY = 'ola_charter_common_addresses';
+  function loadCommonAddresses(){
+    try{
+      const raw = localStorage.getItem(COMMON_ADDR_KEY);
+      return raw ? JSON.parse(raw) : [];
+    }catch(e){ return []; }
+  }
+  function saveCommonAddresses(list){
+    try{ localStorage.setItem(COMMON_ADDR_KEY, JSON.stringify(list)); }catch(e){}
+  }
+  function addCommonAddress(entry){
+    const list = loadCommonAddresses();
+    const isDup = list.some(x => x.city===entry.city && x.district===entry.district && x.landmark===entry.landmark && x.address===entry.address);
+    if(isDup) return;
+    list.unshift(entry);
+    if(list.length>6) list.length = 6;
+    saveCommonAddresses(list);
+    renderCommonChips('p');
+  }
+  function removeCommonAddress(idx){
+    const list = loadCommonAddresses();
+    list.splice(idx,1);
+    saveCommonAddresses(list);
+    renderCommonChips('p');
+  }
+  function fillLocationFromCommon(prefix, entry){
+    const citySel = document.getElementById(prefix+'-city');
+    const distSel = document.getElementById(prefix+'-district');
+    const landInput = document.getElementById(prefix+'-landmark');
+    const addrInput = document.getElementById(prefix+'-address');
+    citySel.value = entry.city || '';
+    citySel.dispatchEvent(new Event('change'));
+    distSel.value = entry.district || '';
+    distSel.dispatchEvent(new Event('change'));
+    landInput.value = entry.landmark || '';
+    addrInput.value = entry.address || '';
+  }
+  function renderCommonChips(prefix){
+    const container = document.getElementById(prefix+'-common-addr');
+    if(!container) return;
+    const list = loadCommonAddresses();
+    if(!list.length){ container.innerHTML = ''; container.style.display = 'none'; return; }
+    container.style.display = 'flex';
+    container.innerHTML = list.map((item, idx) =>
+      '<div class="common-addr-chip" data-idx="'+idx+'">'+
+        '<span class="chip-label">📍 '+item.label+'</span>'+
+        '<span class="chip-del" data-idx="'+idx+'">✕</span>'+
+      '</div>'
+    ).join('');
+    container.querySelectorAll('.common-addr-chip').forEach(chip=>{
+      chip.addEventListener('click', (e)=>{
+        if(e.target.classList.contains('chip-del')){
+          e.stopPropagation();
+          removeCommonAddress(parseInt(e.target.dataset.idx,10));
+          return;
+        }
+        const idx = parseInt(chip.dataset.idx,10);
+        const list2 = loadCommonAddresses();
+        if(list2[idx]) fillLocationFromCommon(prefix, list2[idx]);
+      });
+    });
+  }
+
   function buildLocationPicker(container, prefix){
     container.innerHTML =
+      '<div class="common-addr-row" id="'+prefix+'-common-addr" style="display:none;"></div>' +
       '<div class="field"><label>縣市</label>' +
         '<select id="'+prefix+'-city"><option value="">請選擇縣市</option>' +
           Object.keys(DISTRICTS).map(c=>'<option value="'+c+'">'+c+'</option>').join('') +
@@ -738,7 +799,8 @@
         '<input type="text" id="'+prefix+'-landmark" list="'+prefix+'-landmarkList" placeholder="例如：台北車站">' +
         '<datalist id="'+prefix+'-landmarkList"></datalist></div>' +
       '<div class="field" style="margin-bottom:0;"><label>詳細地址（選填）</label>' +
-        '<input type="text" id="'+prefix+'-address" placeholder="例如：忠孝東路四段 1 號"></div>';
+        '<input type="text" id="'+prefix+'-address" placeholder="例如：忠孝東路四段 1 號"></div>' +
+      '<a href="#" class="save-common-link" id="'+prefix+'-save-common">💾 存為常用地址</a>';
 
     const citySel = document.getElementById(prefix+'-city');
     const distSel = document.getElementById(prefix+'-district');
@@ -753,6 +815,22 @@
       const opts = (LANDMARKS[distSel.value]||[]).filter(Boolean);
       landList.innerHTML = opts.map(l=>'<option value="'+l+'"></option>').join('');
     });
+
+    document.getElementById(prefix+'-save-common').addEventListener('click', (e)=>{
+      e.preventDefault();
+      const city = citySel.value, district = distSel.value;
+      const landmark = landInput.value.trim();
+      const address = document.getElementById(prefix+'-address').value.trim();
+      if(!city || !district){
+        alert('請先選擇縣市與行政區，再儲存常用地址喔。');
+        return;
+      }
+      const label = window.prompt('幫這個地址取個好記的名字吧！例如：家、公司', landmark || (city+district));
+      if(label === null) return;
+      addCommonAddress({ label: label.trim() || (city+district), city, district, landmark, address });
+    });
+
+    renderCommonChips(prefix);
   }
   buildLocationPicker(document.getElementById('pickupFields'), 'p');
 
@@ -847,6 +925,16 @@
   }
   addonFreeGroup.addEventListener('click', toggleAddon);
 
+  const paymentMethodGroup = document.getElementById('paymentMethodGroup');
+  paymentMethodGroup.addEventListener('click', e=>{
+    const pill = e.target.closest('.pill');
+    if(!pill) return;
+    document.querySelectorAll('#paymentMethodGroup .pill').forEach(p=>p.classList.remove('selected'));
+    pill.classList.add('selected');
+    formData.paymentMethod = pill.dataset.value;
+    showError(2, false);
+  });
+
   function addonsPaidTotal(){
     const stepperTotal = ADDONS_STEPPER.reduce((sum,a)=>sum+(formData.addonQty[a.id]||0)*a.price, 0);
     const toggleTotal = ADDONS_PAID.filter(a=>formData.addons[a.id]).reduce((sum,a)=>sum+a.price,0);
@@ -877,37 +965,37 @@
   }
 
   function validateStep(step){
+    // STEP 0：聯絡資訊 + 用車日期時間
     if(step===0){
       formData.name = document.getElementById('f-name').value.trim();
       formData.phone = document.getElementById('f-phone').value.trim();
-      const ok = formData.name.length>0 && formData.phone.replace(/\D/g,'').length>=8;
-      showError(0, !ok); return ok;
-    }
-    if(step===1){
+      const okContact = formData.name.length>0 && formData.phone.replace(/\D/g,'').length>=8;
       formData.date = document.getElementById('f-date').value;
       formData.time = document.getElementById('f-time').value;
-      const ok = !!formData.date && !!formData.time;
-      showError(1, !ok); return ok;
+      const okTime = !!formData.date && !!formData.time;
+      const ok = okContact && okTime;
+      showError(0, !ok);
+      if(ok) saveProfile();
+      return ok;
     }
-    if(step===2){
+    // STEP 1：上車地點 + 包車時數/需求
+    if(step===1){
       collectLocation('p');
-      const ok = !!formData.pCity && !!formData.pDistrict && (formData.pLandmark || formData.pAddress);
-      showError(2, !ok); return ok;
-    }
-    if(step===3){
+      const okLocation = !!formData.pCity && !!formData.pDistrict && (formData.pLandmark || formData.pAddress);
       formData.charterHours = document.getElementById('charter-hours').value;
       formData.charterNote = document.getElementById('charter-note').value.trim();
-      const ok = !!formData.charterHours;
-      showError(3, !ok); return ok;
+      const okHours = !!formData.charterHours;
+      const ok = okLocation && okHours;
+      showError(1, !ok); return ok;
     }
-    if(step===4){
+    // STEP 2：人數 + 車型 + 付款方式
+    if(step===2){
       formData.pax = paxSelect.value;
-      const ok = !!formData.pax;
-      showError(4, !ok); return ok;
-    }
-    if(step===5){
-      const ok = !!formData.vehicleType;
-      showError(5, !ok); return ok;
+      const okPax = !!formData.pax;
+      const okVehicle = !!formData.vehicleType;
+      const okPayment = !!formData.paymentMethod;
+      const ok = okPax && okVehicle && okPayment;
+      showError(2, !ok); return ok;
     }
     return true;
   }
@@ -917,9 +1005,24 @@
     if(currentStep < TOTAL_STEPS-1){
       currentStep++;
       showStep(currentStep);
-      if(currentStep === 5) refreshVehiclePrices();
-      if(currentStep === TOTAL_STEPS-1) renderSummary();
+      if(currentStep === 2) refreshVehiclePrices();
+      if(currentStep === TOTAL_STEPS-1){
+        if(!formData.orderNumber) formData.orderNumber = generateOrderNumber();
+        renderSummary();
+      }
     }
+  }
+  function generateOrderNumber(){
+    const now = new Date();
+    const yy = String(now.getFullYear()).slice(2);
+    const mm = String(now.getMonth()+1).padStart(2,'0');
+    const dd = String(now.getDate()).padStart(2,'0');
+    const hh = String(now.getHours()).padStart(2,'0');
+    const mi = String(now.getMinutes()).padStart(2,'0');
+    const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
+    let rand = '';
+    for(let i=0;i<2;i++) rand += chars[Math.floor(Math.random()*chars.length)];
+    return 'CH' + yy + mm + dd + '-' + hh + mi + rand;
   }
   function prevStep(){
     if(currentStep>0){ currentStep--; showStep(currentStep); }
@@ -939,6 +1042,7 @@
   }
 
   function renderSummary(){
+    document.getElementById('pass-order-number').textContent = formData.orderNumber || '—';
     document.getElementById('pass-type').textContent = '包車服務';
     document.getElementById('pass-from').textContent = formData.pCity ? (formData.pCity+formData.pDistrict) : '—';
 
@@ -947,6 +1051,7 @@
     document.getElementById('pass-note').textContent = formData.charterNote || '無特殊需求';
 
     document.getElementById('pass-fare').textContent = describeCharterPrice(formData.vehicleType, formData.charterHours) + '（定額收費，如選其他時數請洽客服報價）';
+    document.getElementById('pass-payment').textContent = formData.paymentMethod || '—';
 
     document.getElementById('bottomNote').innerHTML =
       '包車費用為定額收費，行程中不臨時加價；如有特殊車款或需求，最終以客服報價為準。<br>' +
@@ -1004,6 +1109,7 @@
     const vehicleLabel = VEHICLE_LABELS[formData.vehicleType] || formData.vehicleType || '未選擇';
 
     const bodyContents = [
+      flexRow('訂單編號', formData.orderNumber || '—'),
       flexRow('姓名', formData.name),
       flexRow('電話', formData.phone),
       flexRow('用車時間', (formData.date || '') + ' ' + (formData.time || '')),
@@ -1016,6 +1122,7 @@
       flexRow('行李', luggageTotal() + ' 件（' + luggageText() + '）'),
       flexRow('車輛類型', vehicleLabel),
       flexRow('附加服務', addonsText()),
+      flexRow('付款方式', formData.paymentMethod || '—'),
       flexSeparator(),
       flexRow('預估費用', describeCharterPrice(formData.vehicleType, formData.charterHours), '#B8863C'),
       { type: 'text', text: '僅供參考，最終以客服報價為準', size: 'xxs', color: '#8B93A0', margin: 'sm' },
@@ -1058,6 +1165,7 @@
 
     const lines = [
       "【包車預約】",
+      "訂單編號：" + (formData.orderNumber || ''),
       "服務類型：包車服務",
       "姓名：" + (formData.name || ''),
       "電話：" + (formData.phone || ''),
@@ -1066,6 +1174,7 @@
       "上車：" + pickupText,
       "包車時數：" + (formData.charterHours || '—') + " 小時",
       "行程需求：" + (formData.charterNote || "無"),
+      "付款方式：" + (formData.paymentMethod || '—'),
       "預估包車費用：" + describeCharterPrice(formData.vehicleType, formData.charterHours) + "（僅供參考，最終以客服報價為準）",
       "超時收費標準：轎車每小時加收NT$600，休旅車每小時加收NT$700，九人座每小時加收NT$900。",
       "費用包含：司機服務、行李協助、等候時間、油資、過路費（安全座椅／增高墊、偏遠山區郊區、跨縣市長途另計）",
@@ -1106,12 +1215,49 @@
     setTimeout(()=>toast.classList.remove('show'), 2000);
   }
 
+  // ---------- 記住我：儲存姓名與電話，下次自動帶入 ----------
+  const PROFILE_KEY = 'ola_charter_profile';
+  function saveProfile(){
+    try{
+      if(formData.name && formData.phone){
+        localStorage.setItem(PROFILE_KEY, JSON.stringify({ name: formData.name, phone: formData.phone }));
+      }
+    }catch(e){ /* localStorage 不可用時安靜略過 */ }
+  }
+  function loadProfile(){
+    try{
+      const raw = localStorage.getItem(PROFILE_KEY);
+      return raw ? JSON.parse(raw) : null;
+    }catch(e){ return null; }
+  }
+  function clearProfile(){
+    try{ localStorage.removeItem(PROFILE_KEY); }catch(e){}
+    document.getElementById('f-name').value = '';
+    document.getElementById('f-phone').value = '';
+    formData.name = ''; formData.phone = '';
+    document.getElementById('savedProfileNote').style.display = 'none';
+  }
+
   (function init(){
     if (typeof liff !== 'undefined') {
       liff.init({ liffId: "2011032597-0WRzja0B" }).catch(err => console.error("LIFF 初始化失敗", err));
     }
     const today = new Date().toISOString().split('T')[0];
     document.getElementById('f-date').min = today;
+
+    const saved = loadProfile();
+    if(saved){
+      document.getElementById('f-name').value = saved.name || '';
+      document.getElementById('f-phone').value = saved.phone || '';
+      formData.name = saved.name || '';
+      formData.phone = saved.phone || '';
+      document.getElementById('savedProfileNote').style.display = 'block';
+    }
+    document.getElementById('clearSavedProfile').addEventListener('click', function(e){
+      e.preventDefault();
+      clearProfile();
+    });
+
     showStep(0);
   })();
 
